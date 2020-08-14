@@ -2,6 +2,7 @@
 #define __LQT_QT_HPP
 
 #include "lqt_common.hpp"
+#include "qtluastring.h"
 
 int lqtL_qt_metacall (lua_State *, QObject *, QObject *, QMetaObject::Call, const char *, int, void **);
 void lqtL_qobject_custom (lua_State *L);
@@ -36,6 +37,15 @@ QWebEngineCallback<const QVariant &> lqtL_getQWebEngineCallback_QVariant(lua_Sta
 int lqtL_pushqobject(lua_State *L, QObject * object);
 int lqtL_qvariant_value_custom(lua_State *L, int index, bool convert_to);
 void lqtL_embed(lua_State *L);
+
+//qtlua
+static int lua_class_inherit(lua_State *L);
+static int lua_class_cast(lua_State *L);
+static void lua_pgettable(lua_State *st, int index);
+static void lua_psettable(lua_State *st, int index);
+static void set_global(lua_State* L, const QtLua::String &path, lua_CFunction f);
+static void set_global_r(lua_State* L, const QtLua::String &name, lua_CFunction f, int tblidx);
+static void reg_qt_function(lua_State* L, const char *name, lua_CFunction f);
 
 #endif // __LQT_QT_HPP
 

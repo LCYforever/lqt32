@@ -2,6 +2,7 @@
 
 build/*
 xcode/*
+.vscode/*
 common/lqt_embed.h
 common/embed/*.h
 test/styles/*

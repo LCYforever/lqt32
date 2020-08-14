@@ -480,11 +480,12 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     luaL_Reg *getters, luaL_Reg *setters, lua_CFunction override,
     lqt_Base *bases)
 {
-    int len = 0;
-    char *new_name = NULL;
+    //int len = 0;
+    //char *new_name = NULL;
     lqt_Base *bi = bases;
     luaL_newmetatable(L, name); // (1)
-    luaL_register(L, NULL, mt); // (1)
+	if(mt)
+		luaL_register(L, NULL, mt); // (1)
     // setup offsets
     lua_pushstring(L, name); // (2) FIXME: remove
     lua_pushinteger(L, 0); // (3) FIXME: remove
@@ -534,7 +535,8 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     // strncpy(new_name, name, len);
     // new_name[len-1] = '\0';
     lua_newtable(L); // (1)
-    luaL_register(L, NULL, mt); // (1)
+	if(mt)
+		luaL_register(L, NULL, mt); // (1)
     // free(new_name);
     // new_name = NULL;
     lua_newtable(L); // (2)
@@ -542,6 +544,14 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     lua_setfield(L, -2, "__call"); // (2)
     lqtL_pushindexfunc(L, name, bases); // (2)
     lua_setfield(L, -2, "__index"); // (1)
+
+	lua_pushvalue(L, -1);
+	lua_pushstring(L, name);
+	lua_settable(L, LUA_REGISTRYINDEX); /* reg[mt] = type_name */
+	lua_pushliteral(L, ".classname");   // stack: metatable ".classname"
+	lua_pushstring(L, name);            // stack: metatable ".classname" name
+	lua_rawset(L, -3);                  // stack: metatable[.classname] = name
+
     lua_setmetatable(L, -2); // (1)
     // lua_pop(L, 1); // (0)
     /*

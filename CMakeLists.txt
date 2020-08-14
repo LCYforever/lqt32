@@ -47,7 +47,7 @@ if (APPLE)
 	set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
 	set(LUA_LIBRARIES ${LUA_INCLUDE_DIR}/libluajit.so)
 elseif (WIN32)
-	set(CMAKE_PREFIX_PATH D:/Qt/Qt5.13.0/5.13.0/msvc2017_64/lib/cmake)
+	set(CMAKE_PREFIX_PATH C:/Qt/Qt5.13.0.x86/5.13.0/msvc2017/lib/cmake)
 	set(LUA_LIBRARIES ${LUA_INCLUDE_DIR}/lua51.lib)
 endif()
 
@@ -55,24 +55,9 @@ set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 
 find_package(Qt5 REQUIRED
 	Core
-	Network
-	Sql
-	Positioning
-	Script
-	ScriptTools
-	Qml
-	WebChannel
 	Gui
 	Widgets
-	OpenGL
-	PrintSupport
 	UiTools
-	Quick
-	QuickWidgets
-	WebSockets
-	WebEngineCore
-	WebEngineWidgets
-	Test
 )
 
 if(WIN32)
@@ -195,7 +180,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 	set(COMMON COMMON_${BINDING_NAME})
 	file(GLOB ${COMMON}_SRC ${CMAKE_SOURCE_DIR}/common/*.cpp)
 	file(GLOB ${COMMON}_HPP ${CMAKE_SOURCE_DIR}/common/*.hpp)
-	file(GLOB ${COMMON}_HPP ${CMAKE_SOURCE_DIR}/common/*.inl)
+	file(GLOB ${COMMON}_INL ${CMAKE_SOURCE_DIR}/common/*.inl)
 
 	set(${BINDING_NAME}_GENERATED ${LQT_GEN_DIR}/${BINDING_NAME}_enum.cpp
 									${LQT_GEN_DIR}/${BINDING_NAME}_meta.cpp
@@ -223,7 +208,8 @@ function(build_qt_lib_binding BINDING_HEADER)
 	add_library(${BINDING_NAME} MODULE ${BINDING_SRC}
 											${${COMMON}_SRC}
 											${${COMMON}_HPP} 
-											${${COMMON}_MOC})
+											${${COMMON}_MOC}
+											${${COMMON}_INL})
 
 	qt5_use_modules(${BINDING_NAME} ${QT_LIBRARIES})
 											
@@ -248,34 +234,6 @@ else()
 	build_qt_lib_binding(QtCore)
 
 	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Network Core)
-	build_qt_lib_binding(QtNetwork QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Sql Core)
-	build_qt_lib_binding(QtSql QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Positioning Core)
-	build_qt_lib_binding(QtPositioning QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Script Core)
-	build_qt_lib_binding(QtScript QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES ScriptTools Widgets Gui Script Core)
-	build_qt_lib_binding(QtScriptTools QtWidgets QtGui QtScript QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Qml Network Core)
-	build_qt_lib_binding(QtQml QtNetwork QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES WebChannel Qml Core)
-	build_qt_lib_binding(QtWebChannel QtQml QtCore)
-
-	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Gui Core)
 	build_qt_lib_binding(QtGui QtCore)
 
@@ -284,40 +242,8 @@ else()
 	build_qt_lib_binding(QtWidgets QtGui QtCore)
 
 	set(REUSE_FILES 1)
-	set(QT_LIBRARIES OpenGL Widgets Gui Core)
-	build_qt_lib_binding(QtOpenGL QtWidgets QtGui QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES PrintSupport Widgets Gui Core)
-	build_qt_lib_binding(QtPrintSupport QtWidgets QtGui QtCore)
-
-	set(REUSE_FILES 1)
 	set(QT_LIBRARIES UiTools Widgets Gui Core)
 	build_qt_lib_binding(QtUiTools QtWidgets QtGui QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Quick Gui Qml Core)
-	build_qt_lib_binding(QtQuick QtGui QtQml QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES QuickWidgets Widgets Quick Gui Qml Core)
-	build_qt_lib_binding(QtQuickWidgets QtWidgets QtQuick QtGui QtQml QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES WebSockets Network Core)
-	build_qt_lib_binding(QtWebSockets QtNetwork QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES WebEngineCore WebChannel Positioning Quick Qml Gui Core)
-	build_qt_lib_binding(QtWebEngineCore QtWebChannel QtPositioning QtQuick QtQml QtGui QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES WebEngineWidgets WebChannel PrintSupport Quick Network Widgets WebEngineCore Gui Core)
-	build_qt_lib_binding(QtWebEngineWidgets QtWebChannel QtPrintSupport QtQuick QtNetwork QtWidgets QtWebEngineCore QtGui QtCore)
-
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Test Widgets Gui Network Core)
-	build_qt_lib_binding(QtTest QtWidgets QtGui QtNetwork QtCore)
 
 	set(REUSE_FILES 1)
 	if(WIN32)
@@ -327,14 +253,5 @@ else()
 		set(QT_LIBRARIES MacExtras Gui Core)
 		build_qt_lib_binding(QtMacExtras QtGui QtCore)
 	endif(WIN32)
-endif()
 
-add_subdirectory(modules/lrdb)
-add_subdirectory(modules/lpeglabel)
-add_subdirectory(modules/lfs)
-add_subdirectory(modules/lpath)
-add_subdirectory(modules/lua-miniz)
-add_subdirectory(modules/luautf8)
-add_subdirectory(modules/luagbk)
-add_subdirectory(modules/luasocket)
-add_subdirectory(modules/lanes)
+endif()
