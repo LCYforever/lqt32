@@ -245,7 +245,6 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
 
 static int lua_class_cast(lua_State *L)
 {
-
 	/* stack: userdata, string */
 	if (lua_gettop(L) < 2) {
 		lua_pushliteral(L, "Miss arguments to iskindof.");

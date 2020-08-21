@@ -349,6 +349,14 @@ static void dumpStack(const char *msg, lua_State* l) {
 }
 
 static int lqtL_newindexfunc (lua_State *L) {
+	if (lua_type(L, 1) == LUA_TTABLE)
+	{
+		lua_getmetatable(L, 1);  /* stack: t k v mt */
+		lua_replace(L, 1);      /* stack: mt k v */
+		lua_rawset(L, 1);
+		return 0;
+	}
+
     if (!lua_isuserdata(L, 1) && lua_islightuserdata(L, 1)) return 0;
     
     // first try a setter
@@ -480,20 +488,18 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     luaL_Reg *getters, luaL_Reg *setters, lua_CFunction override,
     lqt_Base *bases)
 {
-    //int len = 0;
-    //char *new_name = NULL;
     lqt_Base *bi = bases;
     luaL_newmetatable(L, name); // (1)
 	if(mt)
 		luaL_register(L, NULL, mt); // (1)
     // setup offsets
-    lua_pushstring(L, name); // (2) FIXME: remove
-    lua_pushinteger(L, 0); // (3) FIXME: remove
-    lua_settable(L, -3); // (1) FIXME: remove
+    lua_pushstring(L, name); // (2) 
+    lua_pushinteger(L, 0); // (3) 
+    lua_settable(L, -3); // (1) 
     while (bi->basename!=NULL) {
-        lua_pushstring(L, bi->basename); // (2) FIXME: remove
-        lua_pushinteger(L, bi->offset); // (3) FIXME: remove
-        lua_settable(L, -3); // (1) FIXME: remove
+        lua_pushstring(L, bi->basename); // 
+        lua_pushinteger(L, bi->offset); // 
+        lua_settable(L, -3); // (1) 
         bi++;
     }
     
@@ -526,43 +532,27 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     // lua_pushcfunction(L, lqtL_local_ctor); // (3)
     // lua_setfield(L, -2, "__call"); // (2)
 
-    // set it as its own metatable
-    lua_pushvalue(L, -1); // (2)
-    lua_setmetatable(L, -2); // (1)
-    lua_pop(L, 1); // (0)
-    // len = strlen(name);
-    // new_name = (char*)malloc(len*sizeof(char));
-    // strncpy(new_name, name, len);
-    // new_name[len-1] = '\0';
-    lua_newtable(L); // (1)
-	if(mt)
-		luaL_register(L, NULL, mt); // (1)
-    // free(new_name);
-    // new_name = NULL;
-    lua_newtable(L); // (2)
-    lua_pushcfunction(L, lqtL_local_ctor); // (3)
-    lua_setfield(L, -2, "__call"); // (2)
-    lqtL_pushindexfunc(L, name, bases); // (2)
-    lua_setfield(L, -2, "__index"); // (1)
-
 	lua_pushvalue(L, -1);
 	lua_pushstring(L, name);
 	lua_settable(L, LUA_REGISTRYINDEX); /* reg[mt] = type_name */
-	lua_pushliteral(L, ".classname");   // stack: metatable ".classname"
-	lua_pushstring(L, name);            // stack: metatable ".classname" name
-	lua_rawset(L, -3);                  // stack: metatable[.classname] = name
+	lua_pushliteral(L, ".mtforclass");   // stack: metatable ".mtforclass"
+	lua_pushstring(L, name);            // stack: metatable ".mtforclass" name
+	lua_rawset(L, -3);                  // stack: metatable[.mtforclass] = name
 
-    lua_setmetatable(L, -2); // (1)
-    // lua_pop(L, 1); // (0)
-    /*
-    lua_pushlstring(L, name, strlen(name)-1); // (1)
-    lua_newtable(L); // (2)
-    luaL_newmetatable(L, name); // (3)
-    lua_setmetatable(L, -2); // (2)
-    // don't register again but use metatable
-    //luaL_register(L, NULL, mt); // (2)
-    lua_settable(L, LUA_GLOBALSINDEX); // (0)
-    */
+    lua_pushvalue(L, -1); // (2)
+    lua_setmetatable(L, -2); // (1) set it as its own metatable
+    //lua_pop(L, 1); // (0)
+
+    lua_newtable(L); // (1)
+	if(mt)
+		luaL_register(L, NULL, mt); // (1)
+	lua_pushliteral(L, ".classsname");   // stack: mt table ".classsname"
+	lua_pushstring(L, name);            // stack: mt table ".classsname" name
+	lua_rawset(L, -3);                  // stack: mt table[.classsname] = name
+	lua_pushvalue(L, -2);   // stack: mt table mt
+	lua_setmetatable(L, -2);  // stack: mt table
+	lua_remove(L, -2);		// stack: table
+
     return 0;
 }
 
