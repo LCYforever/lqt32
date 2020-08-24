@@ -1,0 +1,9 @@
+#ifndef QT_QTXML_MODULE_H
+#define QT_QTXML_MODULE_H
+#include <QtXml/QtXmlDepends.lqt>
+#include "qdom.lqt"
+#include "qtxml-config.lqt"
+#include "qtxmlglobal.lqt"
+#include "qtxmlversion.lqt"
+#include "qxml.lqt"
+#endif

@@ -155,7 +155,7 @@ public:
 
     void create();
 
-    WId winId() const;
+    unsigned int winId() const;
 
     QWindow *parent(AncestorMode mode) const;
     QWindow *parent() const; // ### Qt6: Merge with above
@@ -268,7 +268,7 @@ public:
     void unsetCursor();
 #endif
 
-    static QWindow *fromWinId(WId id);
+    static QWindow *fromWinId(unsigned int id);
 
 // #if QT_CONFIG(vulkan) || defined(Q_CLANG_QDOC)
     void setVulkanInstance(QVulkanInstance *instance);
