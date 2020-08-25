@@ -544,8 +544,8 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     //lua_pop(L, 1); // (0)
 
     lua_newtable(L); // (1)
-	if(mt)
-		luaL_register(L, NULL, mt); // (1)
+	//if(mt)
+	//	luaL_register(L, NULL, mt); // (1)
 	lua_pushliteral(L, ".classsname");   // stack: mt table ".classsname"
 	lua_pushstring(L, name);            // stack: mt table ".classsname" name
 	lua_rawset(L, -3);                  // stack: mt table[.classsname] = name

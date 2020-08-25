@@ -309,13 +309,21 @@ static int lua_class_inherit(lua_State *L)
 		lua_error(L);
 		return 0;
 	}
+
+	luaL_newmetatable(L, base);
+	lua_pushliteral(L, "__override");
+	lua_rawget(L, -2);
+	lua_CFunction addOverride = NULL;
+	if (lua_iscfunction(L, -1)) {
+		addOverride = lua_tocfunction(L, -1);
+	}
 	lua_pop(L, 1);
 
 	lqt_Base lqt_base[] = {
 		{base, 0},
 		{NULL, 0}
 	};
-	lqtL_createclass(L, name, NULL, NULL, NULL, NULL, lqt_base);
+	lqtL_createclass(L, name, NULL, NULL, NULL, addOverride, lqt_base);
 
 	return 1;
 }
